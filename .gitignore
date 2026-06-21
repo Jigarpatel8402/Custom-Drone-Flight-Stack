@@ -1,0 +1,15 @@
+# ROS2
+workspace/build/
+workspace/install/
+workspace/log/
+
+# Python
+__pycache__/
+*.pyc
+
+# VS Code
+.vscode/
+
+# Linux
+*.swp
+.DS_Store

@@ -1,0 +1,7 @@
+{
+  "package_name": "drone_interfaces",
+  "output_dir": "/home/jigar/Robotics/Drone/workspace/src/drone_interfaces/build/rosidl_generator_type_description/drone_interfaces",
+  "idl_tuples": [
+    "/home/jigar/Robotics/Drone/workspace/src/drone_interfaces/build/rosidl_adapter/drone_interfaces:msg/DroneCommand.idl"
+  ]
+}

@@ -1,0 +1,41 @@
+### setup.py formate:
+	<executable_name> = <package_name>.<python_file_name>:main
+### launch.py formate:
+	Node(
+		package = <package_name>,
+		executable_name = <executable_name>,
+		name = <parameters_name_in_yaml>,
+		parameters = [<parameter_file_path>]
+	)
+
+
+### Some Important Commands:
+
+1. Open gazebo world and simulation
+gz sim -r $DRONE_PROJECT/simulations/worlds/iris_runway.sdf
+ 
+2. Start ros_gz_bridge
+ros2 run ros_gz_bridge parameter_bridge /world/iris_runway/model/iris/link/imu_link/sensor/imu_sensor/imu@sensor_msgs/msg/Imu@gz.msgs.IMU
+
+
+### Important for future Updation:
+
+1. The drone_estimator node need to change to stqable output. the best approaches are:
+	a. only gyro 
+	b. gyro + accerometer (complemetry filter) (current implemetation)
+	c. gyro + accerometer + megnetometer (Mehony FIlter)
+	d. medgwick filter
+	e. EKF (IMU + GPS + barometer + airspeed + visison)
+	
+2. In control, there need to add full PID controls (completed)
+
+3. Need to add pwm timer for the real drones in the future pwm generation node
+
+4. Need to add motor ramping for the batter control for the ESC.
+
+5. Need to add some modes in the command node.
+
+6. Add PID for yaw also.
+
+7. Make setpoint ony accept yaw, it will not accept roll and pitch.
+

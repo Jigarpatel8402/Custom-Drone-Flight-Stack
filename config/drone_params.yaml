@@ -1,0 +1,45 @@
+drone_estimator:
+  ros__parameters:
+    gyro_weight: 0.9995
+    accel_weight: 0.0005
+
+attitude_control:
+  ros__parameters:
+    kp_roll: 2.0
+    ki_roll: 1.0
+    kd_roll: 0.0
+    kp_pitch: 1.0
+    ki_pitch: 0.0
+    kd_pitch: 0.0
+    kp_yaw: 1.0
+    ki_yaw: 0.0
+    kd_yaw: 0.0
+    max_attitude_output: 10.0
+
+position_control:
+  ros__parameters:
+    kp_position: 1.0
+    ki_position: 0.1
+    kd_position: 0.0
+    max_velocity: 2.0
+
+altitude_velocity_control:
+  ros__parameters:
+    hover_throttle: 350.0
+    kp_altitude_velocity: 100.0
+    ki_altitude_velocity: 10.0
+    kd_altitude_velocity: 150.0
+
+xy_velocity_control:
+  ros__parameters:
+    kp_xy_velocity: 3.0
+    max_tilt: 5.0
+
+drone_pwm:
+  ros__parameters:
+    timer: 0.0
+
+drone_command:
+  ros__parameters:
+    arm_throttle: 100.0
+

@@ -1,0 +1,2 @@
+okay then, let's start with xy _velocity_controller. 
+but my attitude_controller is not fully build. does it okay to start with xy_velocity_controller now?

@@ -1,0 +1,60 @@
+### Packages:
+0. drone_bringup (launch drone in one command)
+	a. drone.launch.py (launch all the nodes of the drone)
+
+1. drone_sensor (reads sensor values)
+	a. imu_node (subscibe imu data node)
+		=> subscription topics:
+			/gz/imu
+		=> publisher topics:
+
+2. drone_estimator (current attitude and coordinates)
+	a. estimator_node (subscription data from the sensors and generate use full data node)
+		=> subscription topics:
+			/gz/imu
+		=> publisher topics: 
+			/attitude (current attitude)
+
+3. drone_command (handle commands generation)
+	a. drone_setpoint (attitude commands node)
+		=> subscription topics:
+		=> publisher topics:
+			/attitude_setpoint (attitude commands)
+
+4. drone_control (controls of the drone)
+	a. attitude_control (controls attitude node)
+		=> subscription topics:
+			/attitude
+			/attitude_setpoint
+		=> publisher topics:
+			/control_output (controlling errors in attitude)
+
+5. drone_mixer (handles commands given to the drone)
+	a. motor_mixer (subscribes /control_output and generate /motor_commands)
+		=> subscription topics:
+			/control_output
+		=> publisher topics:
+			/motor_commands (includes total throttle for each motor)
+
+6. drone_actuator (calculates the needed signals for the drone)
+	a. drone_pwm (calculates pwm_signals for the given /motor_commands node)
+		=> subscription topics:
+			/motor_commands
+		=> publisher topics:
+			/pwm_output
+
+7. drone_gazebo_plugin (gazebo simulation plugin)
+	a. drone_motor_plugin (calculates rpm for each motor from pwm)
+		=> subscription topics:
+			/pwm_output
+		=> publisher topics:
+			- directly publish these data to the gazebo components
+	b. drone_sensor_node (publishes sall the sensors data from gazebo)
+		=> subscription topics:
+		=> publisher topics:
+			/drone_imu
+			/drone_gps
+			/drone_barometer
+			/drone_magnetometer
+
+
