@@ -1,0 +1,8 @@
+1. RotorS: learn motor physics
+2. PX4: learn controller design
+3. motor_pugin v2: implement
+4. improve controller: Using PX4 ideas
+5. Mahony -> Madgwick -> EKF
+6. Altitude -> Velocity ->Position
+7. Flightmare -> Perception -> RL -> Vision
+and this is where the autonomous flight start

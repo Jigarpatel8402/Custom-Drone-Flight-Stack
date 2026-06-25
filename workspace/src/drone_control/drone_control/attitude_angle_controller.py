@@ -1,9 +1,9 @@
 import rclpy
 from rclpy.node import Node
 from drone_interfaces.msg import DronePose
-from drone_interfaces.msg import DroneAttitude
+from drone_interfaces.msg import DroneAttitudeRate
 
-class AttitudeController(Node):
+class AttitudeAngleController(Node):
     def __init__(self):
         super().__init__('attitude_control')
         self.counter = 0
@@ -46,8 +46,12 @@ class AttitudeController(Node):
         self.declare_parameter('kd_yaw', 0.0)
         self.kd_yaw = self.get_parameter('kd_yaw').value
 
-        self.declare_parameter('max_attitude_output', 5.0)
-        self.max_attitude_output = self.get_parameter('max_attitude_output').value
+        self.declare_parameter('max_roll_rate', 30.0)
+        self.max_roll_rate = self.get_parameter('max_roll_rate').value
+        self.declare_parameter('max_pitch_rate', 30.0)
+        self.max_pitch_rate = self.get_parameter('max_pitch_rate').value
+        self.declare_parameter('max_yaw_rate', 10.0)
+        self.max_yaw_rate = self.get_parameter('max_yaw_rate').value
 
         self.pose_sub = self.create_subscription(
             DronePose,
@@ -70,9 +74,9 @@ class AttitudeController(Node):
             10
         )
 
-        self.attitude_pub = self.create_publisher(
-            DroneAttitude,
-            '/control_attitude',
+        self.rate_pub = self.create_publisher(
+            DroneAttitudeRate,
+            '/desired_rates',
             10
         )
 
@@ -115,80 +119,73 @@ class AttitudeController(Node):
         pitch_derivative = (pitch_error - self.previous_pitch_error) / self.dt
         yaw_derivative = (yaw_error - self.previous_yaw_error) / self.dt
 
-        roll_output = (
+        desired_roll_rate = (
             self.kp_roll * roll_error + 
             self.ki_roll * self.roll_integral + 
             self.kd_roll * roll_derivative
         )
-        pitch_output = (
+        desired_pitch_rate = (
             self.kp_pitch * pitch_error + 
             self.ki_pitch * self.pitch_integral + 
             self.kd_pitch * pitch_derivative
         )
-        yaw_output = (
+        desired_yaw_rate = (
             self.kp_yaw * yaw_error + 
             self.ki_yaw * self.yaw_integral + 
             self.kd_yaw * yaw_derivative
         )
 
-        roll_output = max(
-            min(roll_output, self.max_attitude_output), 
-            -self.max_attitude_output
+        desired_roll_rate = max(
+            min(desired_roll_rate, self.max_roll_rate), 
+            -self.max_roll_rate
         )
-        pitch_output = max(
-            min(pitch_output, self.max_attitude_output), 
-            -self.max_attitude_output
+        desired_pitch_rate = max(
+            min(desired_pitch_rate, self.max_pitch_rate), 
+            -self.max_pitch_rate
         )
-        yaw_output = max(
-            min(yaw_output, self.max_attitude_output), 
-            -self.max_attitude_output
+        desired_yaw_rate = max(
+            min(desired_yaw_rate, self.max_yaw_rate), 
+            -self.max_yaw_rate
         )
         
         self.previous_roll_error = roll_error
         self.previous_pitch_error = pitch_error
         self.previous_yaw_error = yaw_error
 
-        attitude_msg = DroneAttitude()
-        attitude_msg.roll = roll_output
-        attitude_msg.pitch = pitch_output
-        attitude_msg.yaw = yaw_output
-        attitude_msg.throttle = self.throttle
+        rate_msg = DroneAttitudeRate()
+        rate_msg.roll_rate = desired_roll_rate
+        rate_msg.pitch_rate = desired_pitch_rate
+        rate_msg.yaw_rate = desired_yaw_rate
+        rate_msg.throttle = self.throttle
 
-        self.attitude_pub.publish(attitude_msg)
+        self.rate_pub.publish(rate_msg)
 
         self.counter += 1
         if self.counter % 100 == 0:
             self.get_logger().info(
-                f"Current Roll = {self.current_roll:.4f}, "
-                f"Current pitch = {self.current_pitch:.4f}, "
-                f"Current yaw = {self.current_yaw:.4f}, "
-                f"Desired Roll = {self.desired_roll:.4f}, "
-                f"Desired yaw = {self.desired_yaw:.4f}, "
-                f"Roll Error = {roll_error:.4f}, "
-                f"Roll Output = {roll_output:.4f}, "
-                f"yaw Error = {yaw_error:.4f}, "
-                f"yaw output = {yaw_output:.4f}"
+                f"desired_roll={self.desired_roll:.4f}, "
+                f"current_roll={self.current_roll:.4f}, "
+                f"deisred_pitch={self.desired_pitch:.4f}, "
+                f"current_pitch={self.current_pitch:.4f}, "
+                f"desired_yaw={self.desired_yaw:.4f}, "
+                f"current_yaw={self.current_yaw:.4f}"
             )
-            self.get_logger().info(
-                f"dt={self.dt:.6f}, "
-                f"error={roll_error:.4f}, "
-                f"P_output={self.kp_roll * roll_error}, "
-                f"I_output={self.ki_roll * self.roll_integral}, "
-                f"D_output={self.kd_roll * roll_derivative:.4f}"
-            )
+            # self.get_logger().info(
+            #     f"Current Roll = {self.current_roll:.4f}, "
+            #     f"Desired Roll = {self.desired_roll:.4f}, "
+            #     f"Roll Error = {roll_error:.4f}, "
+            #     f"Current pitch = {self.current_pitch:.4f}, "
+            #     f"Desired pitch = {self.desired_pitch:.4f}, "
+            #     f"pitch Error = {pitch_error:.4f}, "
+            #     f"Current yaw = {self.current_yaw:.4f}, "
+            #     f"Desired yaw = {self.desired_yaw:.4f}, "
+            #     f"yaw Error = {yaw_error:.4f}, "
+            # )
 
-        # str = f"Error = {roll_error:.2f}, D = {roll_derivative:.2f}, P_out = {self.kp_roll * roll_error:.2f}, D_out = {self.kd_roll * roll_derivative:.2f}, I = {self.roll_integral:.2f}, I_out = {self.ki_roll * self.roll_integral}"
-        
-        # if self.counter % 400 == 0 and self.desired_roll != 0.0 and self.counter <= 20000:
-        #     self.get_logger().info(
-        #         f"""{str}
-        #         Current Roll = {current_roll:.2f}, Desired Roll = {self.desired_roll:.2f}, Roll Error = {roll_error:.2f}, Roll Output = {roll_output:.2f}"""
-        #     )
-        #     self.i = self.i - 1
 
 def main(args = None):
     rclpy.init(args=args)
-    node = AttitudeController()
+    node = AttitudeAngleController()
     rclpy.spin(node)
     node.destroy_node()
     rclpy.shutdown()

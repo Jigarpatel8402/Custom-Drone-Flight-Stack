@@ -26,14 +26,23 @@ def generate_launch_description():
         #     ]
         # ),
 
-        Node(
-            package = 'drone_control',
-            executable = 'attitude_control',
-            name = 'attitude_control',
-            parameters = [
-                '/home/jigar/Robotics/Drone/config/drone_params.yaml'
-            ]
-        ),
+        # Node(
+        #     package = 'drone_control',
+        #     executable = 'attitude_angle_control',
+        #     name = 'attitude_angle_control',
+        #     parameters = [
+        #         '/home/jigar/Robotics/Drone/config/drone_params.yaml'
+        #     ]
+        # ),
+
+        # Node(
+        #     package = 'drone_control',
+        #     executable = 'attitude_rate_control',
+        #     name = 'attitude_rate_control',
+        #     parameters = [
+        #         '/home/jigar/Robotics/Drone/config/drone_params.yaml'
+        #     ]
+        # ),
 
         # Node(
         #     package = 'drone_control',

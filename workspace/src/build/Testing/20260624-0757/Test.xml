@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Site BuildName="(empty)"
+	BuildStamp="20260624-0757-Experimental"
+	Name="desktop"
+	Generator="ctest-3.28.3"
+	CompilerName="/usr/lib/ccache/g++"
+	CompilerVersion="13.3.0"
+	OSName="Linux"
+	Hostname="desktop"
+	OSRelease="6.17.0-35-generic"
+	OSVersion="#35~24.04.1-Ubuntu SMP PREEMPT_DYNAMIC Tue May 26 19:30:42 UTC 2"
+	OSPlatform="x86_64"
+	Is64Bits="1"
+	VendorString="GenuineIntel"
+	VendorID="Intel Corporation"
+	FamilyID="6"
+	ModelID="183"
+	ProcessorCacheSize="20480"
+	NumberOfLogicalCPU="16"
+	NumberOfPhysicalCPU="10"
+	TotalVirtualMemory="4095"
+	TotalPhysicalMemory="15674"
+	LogicalProcessorsPerPhysical="1"
+	ProcessorClockFrequency="797.647"
+	>
+	<Testing>
+		<StartDateTime>Jun 24 13:27 IST</StartDateTime>
+		<StartTestTime>1782287822</StartTestTime>
+		<TestList/>
+		<EndDateTime>Jun 24 13:27 IST</EndDateTime>
+		<EndTestTime>1782287822</EndTestTime>
+		<ElapsedMinutes>0</ElapsedMinutes>
+	</Testing>
+</Site>

@@ -2,7 +2,7 @@ import rclpy
 from rclpy.node import Node
 from drone_interfaces.msg import DroneThrottle
 from drone_interfaces.msg import DroneAttitude
-from drone_interfaces.msg import DroneRotor
+from drone_interfaces.msg import DroneRotor, DronePose
 
 class MotorMixer(Node):
     def __init__(self):
@@ -20,10 +20,17 @@ class MotorMixer(Node):
         #     10
         # )
 
-        self.attitude_sub = self.create_subscription(
-            DroneAttitude,
-            '/control_attitude',
-            self.attitude_callback,
+        # self.attitude_sub = self.create_subscription(
+        #     DroneAttitude,
+        #     '/control_attitude',
+        #     self.attitude_callback,
+        #     10
+        # )
+
+        self.setpoint_sub = self.create_subscription(
+            DronePose,
+            '/drone_setpoint',
+            self.setpoint_callback,
             10
         )
         
@@ -43,14 +50,20 @@ class MotorMixer(Node):
             'Motor Mixer started'
         )
 
-    def throttle_callback(self, msg):
-        self.throttle = msg.throttle
+    # def throttle_callback(self, msg):
+    #     self.throttle = msg.throttle
     
-    def attitude_callback(self, msg):
+    # def attitude_callback(self, msg):
+    #     self.roll = msg.roll
+    #     self.pitch = msg.pitch
+    #     self.yaw = msg.yaw
+    #     self.throttle = msg.throttle
+
+    def setpoint_callback(self, msg):
+        self.throttle = msg.throttle
         self.roll = msg.roll
         self.pitch = msg.pitch
         self.yaw = msg.yaw
-        self.throttle = msg.throttle
     
     def control_loop(self):
         motor0 = self.throttle + self.roll - self.pitch - self.yaw
@@ -66,11 +79,13 @@ class MotorMixer(Node):
 
         self.motor_pub.publish(motor_msg)
 
-        # if motor0 != 0 and self.counter == 0:
-        #     self.counter += 1
-        #     self.get_logger().info(
-        #         f'''m1 = {motor0:.2f}, m2 = {motor1:.2f}, m3 = {motor2:.2f}, m4 = {motor3:.2f}'''
-        #     )
+        self.counter += 1
+
+        if self.counter % 100 == 0:
+            self.get_logger().info(
+                f'''m1 = {motor0:.2f}, m2 = {motor1:.2f}, m3 = {motor2:.2f}, m4 = {motor3:.2f}'''
+            )
+
 
 def main(args = None):
     rclpy.init(args = args)

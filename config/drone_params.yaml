@@ -2,19 +2,38 @@ drone_estimator:
   ros__parameters:
     gyro_weight: 0.9995
     accel_weight: 0.0005
+    mag_yaw_weight: 0.02
+    gyro_yaw_weight: 0.98
 
-attitude_control:
+attitude_angle_control:
   ros__parameters:
-    kp_roll: 2.0
-    ki_roll: 1.0
+    kp_roll: 1.0
+    ki_roll: 0.0
     kd_roll: 0.0
     kp_pitch: 1.0
     ki_pitch: 0.0
     kd_pitch: 0.0
-    kp_yaw: 1.0
+    kp_yaw: 0.2
     ki_yaw: 0.0
     kd_yaw: 0.0
-    max_attitude_output: 10.0
+    max_roll_rate: 10.0
+    max_pitch_rate: 10.0
+    max_yaw_rate: 5.0
+
+attitude_rate_control:
+  ros__parameters:
+    kp_roll_rate: 1.0
+    ki_roll_rate: 0.0
+    kd_roll_rate: 0.15
+    kp_pitch_rate: 1.0
+    ki_pitch_rate: 0.0
+    kd_pitch_rate: 0.15
+    kp_yaw_rate: 0.1
+    ki_yaw_rate: 0.0
+    kd_yaw_rate: 0.0
+    max_roll_output: 5.0
+    max_pitch_output: 5.0
+    max_yaw_output: 3.0
 
 position_control:
   ros__parameters:

@@ -3,6 +3,7 @@ from rclpy.node import Node
 import math
 from drone_interfaces.msg import DroneIMU
 from drone_interfaces.msg import DroneBarometer
+from drone_interfaces.msg import DroneMagnetometer
 from drone_interfaces.msg import DroneGPS
 from drone_interfaces.msg import DronePose
 from drone_interfaces.msg import DroneState
@@ -14,6 +15,10 @@ class EstimatorNode(Node):
         self.accel_weight = self.get_parameter('accel_weight').value
         self.declare_parameter('gyro_weight', 0.98)
         self.gyro_weight = self.get_parameter('gyro_weight').value
+        self.declare_parameter('mag_yaw_weight', 0.02)
+        self.mag_yaw_weight = self.get_parameter('mag_yaw_weight').value
+        self.declare_parameter('gyro_yaw_weight', 0.98)
+        self.gyro_yaw_weight = self.get_parameter('gyro_yaw_weight').value
         
         self.roll = 0.0
         self.pitch = 0.0
@@ -28,6 +33,15 @@ class EstimatorNode(Node):
         self.vel_z = 0.0
         self.reference_pressure = None
         self.EARTH_RADIUS = 6378137.0
+        self.mag_x = 0.0
+        self.mag_y = 0.0
+        self.mag_z =0.0
+        self.mag_initialize = False
+        self.mag_yaw_reference = 0.0
+
+        self.filtered_gyro_x = 0.0
+        self.filtered_gyro_y = 0.0
+        self.filtered_gyro_z = 0.0
         
         self.previous_time = None
         self.counter = 0
@@ -49,8 +63,15 @@ class EstimatorNode(Node):
 
         self.Barometer_sub = self.create_subscription(
             DroneBarometer,
-            'drone_barometer',
+            '/drone_barometer',
             self.barometer_callback,
+            10
+        )
+
+        self.Magnetometer_sub = self.create_subscription(
+            DroneMagnetometer,
+            '/drone_magnetometer',
+            self.magnetometer_callback,
             10
         )
 
@@ -81,6 +102,14 @@ class EstimatorNode(Node):
             1.0 - (msg.pressure / self.reference_pressure) ** 0.1903
         )
     
+    def magnetometer_callback(self, msg):
+        self.mag_x = msg.magnetic_x
+        self.mag_y = msg.magnetic_y
+        self.mag_z = msg.magnetic_z
+        if not self.mag_initialize:
+            self.mag_yaw_reference = math.atan2(self.mag_y, self.mag_x)
+            self.mag_initialize = True
+    
     def gps_callback(self, msg):
         self.vel_x = msg.velocity_north
         self.vel_y = msg.velocity_east
@@ -101,6 +130,9 @@ class EstimatorNode(Node):
         self.longitude = (
             self.EARTH_RADIUS * math.cos(home_lat_rad) * d_lon
         )
+
+    def AngleDiff(self, target, current):
+        return ((target - current + math.pi) % (2 * math.pi)) - math.pi
     
     def imu_callback(self, msg):
         self.current_time = self.get_clock().now()
@@ -120,32 +152,59 @@ class EstimatorNode(Node):
         ay = msg.accel_y
         az = msg.accel_z
 
-        acc_roll = math.atan2(-ay, -az)
-        acc_pitch = math.atan2(
+        accel_roll = math.atan2(-ay, -az)
+        accel_pitch = -math.atan2(
             ax, 
             math.sqrt(ay * ay + az * az)
         )
 
         gyro_roll = self.roll + gyro_x * dt
         gyro_pitch = self.pitch + gyro_y * dt
-
+        gyro_yaw = self.yaw + gyro_z * dt
+        
+        mag_xh = (
+            self.mag_x * math.cos(self.pitch) + 
+            self.mag_z * math.sin(self.pitch)
+        )
+        mag_yh = (
+            self.mag_x * math.sin(self.roll) * math.sin(self.pitch)
+            + self.mag_y * math.cos(self.roll)
+            - self.mag_z * math.sin(self.roll) * math.cos(self.pitch)
+        )
+        
+        mag_yaw = -math.atan2(mag_yh, mag_xh)
+        mag_yaw += self.mag_yaw_reference
+        yaw_error = self.AngleDiff(mag_yaw, gyro_yaw)
+        
         self.roll = (
             self.gyro_weight * gyro_roll + 
-            self.accel_weight * acc_roll
+            self.accel_weight * accel_roll
         )
         self.pitch = (
             self.gyro_weight * gyro_pitch + 
-            self.accel_weight * acc_pitch
+            self.accel_weight * accel_pitch
         )
-        self.yaw += gyro_z * dt
-        
+        self.yaw = gyro_yaw + 0.01 * yaw_error
+        # self.yaw = gyro_yaw
+
         roll_deg = math.degrees(self.roll)
         pitch_deg = math.degrees(self.pitch)
         yaw_deg = math.degrees(self.yaw)
 
-        # roll_deg = ((roll_deg + 180) % 360) - 180
-        # pitch_deg = ((pitch_deg + 180) % 360) - 180
-        # yaw_deg = ((yaw_deg + 180) % 360) - 180
+        self.filtered_gyro_x = (
+            0.9 * self.filtered_gyro_x +
+            0.1 * gyro_x
+        )
+
+        self.filtered_gyro_y = (
+            0.9 * self.filtered_gyro_y +
+            0.1 * gyro_y
+        )
+
+        self.filtered_gyro_z = (
+            0.9 * self.filtered_gyro_z +
+            0.1 * gyro_z
+        )
         
         self.pose_msg.roll = roll_deg
         self.pose_msg.pitch = pitch_deg
@@ -154,33 +213,54 @@ class EstimatorNode(Node):
         self.pose_msg.y = self.longitude
         self.pose_msg.z = self.altitude
 
-        # vertical_accel = az + (9.81 * math.cos(self.roll) * math.cos(self.pitch))
-        
-        # self.vel_z *= 0.995
-        # self.vel_z += vertical_accel * dt
-
         self.state_msg.linear_vel.x = self.vel_x
         self.state_msg.linear_vel.y = self.vel_y
         self.state_msg.linear_vel.z = self.vel_z
-        self.state_msg.angular_vel.x = gyro_x
-        self.state_msg.angular_vel.y = gyro_y
-        self.state_msg.angular_vel.z = gyro_z
+        self.state_msg.angular_vel.x = math.degrees(self.filtered_gyro_x)
+        self.state_msg.angular_vel.y = math.degrees(self.filtered_gyro_y)
+        self.state_msg.angular_vel.z = math.degrees(self.filtered_gyro_z)
 
         self.pose_pub.publish(self.pose_msg)
         self.state_pub.publish(self.state_msg)
 
+        mag_yaw_deg = math.degrees(mag_yaw)
+
         self.counter += 1
         
-        # if self.counter % 50 == 0:
-        #     self.i -= 1
+        if self.counter % 250 == 0:
+            self.get_logger().info(
+                f"mag={mag_yaw_deg:.4f}, "
+                f"gyro={math.degrees(gyro_yaw):.4f}, "
+                f"error={math.degrees(yaw_error):.4f}, "
+                f"fused={yaw_deg:.4f}"
+            )
         #     self.get_logger().info(
-        #         f"current Roll Pitch Yaw = ({roll_deg}, {pitch_deg}, {yaw_deg})"
+        #         f"gyro_z_deg={gyro_z_deg:.2f}, "
+        #         f"filtered={math.degrees(self.filtered_gyro_z):.2f}, "
+        #         f"yaw_deg={yaw_deg:.2f}"
         #     )
-        
-        # if self.counter % 50 == 0:
         #     self.get_logger().info(
-        #         f"vz={self.vel_z:.3f}"
+        #         f"ax={ax:.4f}, "
+        #         f"ay={ay:.4f}, "
+        #         f"az={az:.4f}"
+        #         f"accel_pitch={accel_pitch:.6f}, "
+        #         f"gyro_y={gyro_y:.6f}, "
+        #         f"pith_deg={pitch_deg:.4f}"
         #     )
+            # self.get_logger().info(
+            #     f"gyro_yaw={math.degrees(gyro_yaw):.2f}, "
+            #     f"mag_yaw_ref={self.mag_yaw_reference:.2f}, "
+            #     f"mx={self.mag_x:.2f}, "
+            #     f"my={self.mag_y:.2f}, "
+            #     f"mag_yaw={math.degrees(mag_yaw):.2f}, "
+            #     f"est_yaw={math.degrees(self.yaw):.2f}"
+            # )
+            # self.get_logger().info(
+            #     f"accel x y z = {ax:.4f} {ay:.4f} {az:.4f}, "
+            #     f"gyro roll pitch yaw = {msg.gyro_x:.4f} {msg.gyro_y:.4f} {msg.gyro_z:.4f}, "
+            #     f"accel roll pitch = {accel_roll:.4f} {accel_pitch:.4f}, "
+            #     f"current roll pitch yaw = {roll_deg:.4f} {pitch_deg:.4f} {yaw_deg:.4f}"
+            # )
 
 
 def main(args = None):

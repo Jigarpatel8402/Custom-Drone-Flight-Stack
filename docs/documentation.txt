@@ -20,7 +20,7 @@ ros2 run ros_gz_bridge parameter_bridge /world/iris_runway/model/iris/link/imu_l
 
 ### Important for future Updation:
 
-1. The drone_estimator node need to change to stqable output. the best approaches are:
+1. The drone_estimator node need to change to stable output. the best approaches are:
 	a. only gyro 
 	b. gyro + accerometer (complemetry filter) (current implemetation)
 	c. gyro + accerometer + megnetometer (Mehony FIlter)
@@ -35,7 +35,9 @@ ros2 run ros_gz_bridge parameter_bridge /world/iris_runway/model/iris/link/imu_l
 
 5. Need to add some modes in the command node.
 
-6. Add PID for yaw also.
+6. Add PID for yaw also. (completed)
 
 7. Make setpoint ony accept yaw, it will not accept roll and pitch.
+
+8. There needs to add IMU and Magnetometer fusion for yaw. (completed)
 

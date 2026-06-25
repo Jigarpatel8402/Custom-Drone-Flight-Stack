@@ -26,6 +26,7 @@ rosidl_generate_interfaces(
   "msg/DroneAttitude.msg"
   "msg/DronePosition.msg"
   "msg/DroneVelocity.msg"
+  "msg/DroneAttitudeRate.msg"
   DEPENDENCIES geometry_msgs
 )
 
