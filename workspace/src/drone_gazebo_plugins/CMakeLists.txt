@@ -31,19 +31,26 @@ if(BUILD_TESTING)
 endif()
 
 add_library(
-  drone_motor_plugin
+  drone_actuator_bridge
   SHARED
-  src/drone_motor_plugin.cpp
+  src/drone_actuator_bridge.cpp
+  src/rotor_physics.cpp
+)
+
+target_include_directories(
+  drone_actuator_bridge
+  PUBLIC
+    ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
 
 target_link_libraries(
-  drone_motor_plugin
+  drone_actuator_bridge
   gz-sim8::gz-sim8
   gz-plugin2::gz-plugin2
 )
 
 ament_target_dependencies(
-  drone_motor_plugin
+  drone_actuator_bridge
   rclcpp
   std_msgs
   drone_interfaces
@@ -68,13 +75,18 @@ ament_target_dependencies(
 
 
 install(
-  TARGETS drone_motor_plugin
+  TARGETS drone_actuator_bridge
   LIBRARY DESTINATION lib
 )
 
 install(
   TARGETS drone_sensor_node
   DESTINATION lib/${PROJECT_NAME}
+)
+
+install(
+  DIRECTORY include/
+  DESTINATION include
 )
 
 ament_package()

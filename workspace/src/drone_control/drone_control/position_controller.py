@@ -1,7 +1,7 @@
 import rclpy
 from rclpy.node import Node
-from drone_interfaces.msg import DronePose
-from drone_interfaces.msg import DroneVelocity
+from drone_model.modes import ControlMode
+from drone_interfaces.msg import DronePose, DroneMode, DroneVelocity
 
 class PositionController(Node):
     def __init__(self):
@@ -11,15 +11,19 @@ class PositionController(Node):
         self.desired_y = 0.0
         self.desired_z = 0.0
         
+        self.control_mode = ControlMode.MANUAL
+        
         self.current_x = 0.0
         self.current_y = 0.0
         self.current_z = 0.0
-
+        
         self.desired_vel_x = 0.0
         self.desired_vel_y = 0.0
         self.desired_vel_z = 0.0
 
         self.z_integral = 0.0
+
+        self.max_altitude = 0.0
 
         self.declare_parameter('kp_position', 1.0)
         self.kp_position = self.get_parameter('kp_position').value
@@ -42,12 +46,19 @@ class PositionController(Node):
             10
         )
 
+        self.mode_sub = self.create_subscription(
+            DroneMode,
+            '/drone_mode',
+            self.mode_callback,
+            10
+        )   
+        
         self.velocity_pub = self.create_publisher(
             DroneVelocity,
             '/desired_velocity',
             10
         )
-
+        
         self.create_timer(
             0.02,
             self.control_loop
@@ -55,15 +66,24 @@ class PositionController(Node):
         self.dt = 0.02
         
     def setpoint_callback(self, msg):
+        if self.control_mode == ControlMode.HOVER:
+            return
+        
         self.desired_x = msg.x
         self.desired_y = msg.y
+        if abs(self.desired_z - msg.z) > 0.01:
+            self.z_integral = 0.0
         self.desired_z = msg.z
-        self.z_integral = 0.0
     
     def pose_callback(self, msg):
         self.current_x = msg.x
         self.current_y = msg.y
         self.current_z = msg.z
+        if self.max_altitude < self.current_z:
+            self.max_altitude = self.current_z
+    
+    def mode_callback(self, msg):
+        self.control_mode = msg.control_mode
     
     def control_loop(self):
         x_error = self.desired_x - self.current_x
@@ -86,7 +106,7 @@ class PositionController(Node):
             self.kp_position * z_error
             + self.ki_position * self.z_integral
         )
-
+        
         self.desired_vel_x = max(
             min(
                 self.desired_vel_x, 
@@ -114,13 +134,17 @@ class PositionController(Node):
         self.velocity_pub.publish(velocity_msg)
 
         self.counter += 1
-        if (self.counter % 20 == 0):
-            self.get_logger().info(
-                f"x_des={self.desired_x:.2f}, "
-                f"x={self.current_x:.2f}, "
-                f"err={x_error:.2f}, "
-                f"vx_des={self.desired_vel_x:.2f}"
-            )
+        # if self.counter % 20 == 0:
+        #     self.get_logger().info(
+        #         f"control_mode={self.control_mode}, "
+        #         f"z_des={self.desired_z:.4f}, "
+        #         f"z={self.current_z:.4f}, "
+        #         f"err={z_error:.4f}, "
+        #         f"vz_des={self.desired_vel_z:.4f}"
+        #     )
+        #     self.get_logger().info(
+        #         f"max_altitude={self.max_altitude:.4f}"
+        #     )
 
 def main(args = None):
     rclpy.init(args = args)

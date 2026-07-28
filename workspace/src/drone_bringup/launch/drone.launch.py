@@ -16,7 +16,7 @@ def generate_launch_description():
                 '/home/jigar/Robotics/Drone/config/drone_params.yaml'
             ] 
         ),
-
+        
         # Node(
         #     package = 'drone_command',
         #     executable = 'drone_setpoint',
@@ -25,42 +25,42 @@ def generate_launch_description():
         #         '/home/jigar/Robotics/Drone/config/drone_params.yaml'
         #     ]
         # ),
+        
+        Node(
+            package = 'drone_control',
+            executable = 'attitude_angle_control',
+            name = 'attitude_angle_control',
+            parameters = [
+                '/home/jigar/Robotics/Drone/config/drone_params.yaml'
+            ]
+        ),
 
-        # Node(
-        #     package = 'drone_control',
-        #     executable = 'attitude_angle_control',
-        #     name = 'attitude_angle_control',
-        #     parameters = [
-        #         '/home/jigar/Robotics/Drone/config/drone_params.yaml'
-        #     ]
-        # ),
+        Node(
+            package = 'drone_control',
+            executable = 'attitude_rate_control',
+            name = 'attitude_rate_control',
+            parameters = [
+                '/home/jigar/Robotics/Drone/config/drone_params.yaml'
+            ]
+        ),
 
-        # Node(
-        #     package = 'drone_control',
-        #     executable = 'attitude_rate_control',
-        #     name = 'attitude_rate_control',
-        #     parameters = [
-        #         '/home/jigar/Robotics/Drone/config/drone_params.yaml'
-        #     ]
-        # ),
+        Node(
+            package = 'drone_control',
+            executable = 'position_control',
+            name = 'position_control',
+            parameters = [
+                '/home/jigar/Robotics/Drone/config/drone_params.yaml'
+            ]
+        ),
 
-        # Node(
-        #     package = 'drone_control',
-        #     executable = 'position_control',
-        #     name = 'position_control',
-        #     parameters = [
-        #         '/home/jigar/Robotics/Drone/config/drone_params.yaml'
-        #     ]
-        # ),
-
-        # Node(
-        #     package = 'drone_control',
-        #     executable = 'altitude_velocity_control',
-        #     name = 'altitude_velocity_control',
-        #     parameters = [
-        #         '/home/jigar/Robotics/Drone/config/drone_params.yaml'
-        #     ]
-        # ),
+        Node(
+            package = 'drone_control',
+            executable = 'altitude_velocity_control',
+            name = 'altitude_velocity_control',
+            parameters = [
+                '/home/jigar/Robotics/Drone/config/drone_params.yaml'
+            ]
+        ),
 
         # Node(
         #     package = 'drone_control',
@@ -70,16 +70,21 @@ def generate_launch_description():
         #         '/home/jigar/Robotics/Drone/config/drone_params.yaml'
         #     ]
         # ),
+
+        Node(
+            package = 'drone_control',
+            executable = 'wrench_control'
+        ),
         
         Node(
-            package = 'drone_mixer',
-            executable = 'motor_mixer'
+            package = 'drone_allocation',
+            executable = 'allocation_node'
         ),
 
         Node(
             package = 'drone_actuator',
-            executable = 'drone_pwm',
-            name = 'drone_pwm',
+            executable = 'actuator_node',
+            name = 'actuator_node',
             parameters = [
                 '/home/jigar/Robotics/Drone/config/drone_params.yaml'
             ]

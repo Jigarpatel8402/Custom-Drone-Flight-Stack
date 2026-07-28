@@ -1,1 +1,1 @@
-sends the logs of estimator to GPT ofr validation
+first follow the last chat

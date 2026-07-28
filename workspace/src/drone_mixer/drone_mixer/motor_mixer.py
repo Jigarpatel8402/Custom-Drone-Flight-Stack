@@ -81,10 +81,10 @@ class MotorMixer(Node):
 
         self.counter += 1
 
-        if self.counter % 100 == 0:
-            self.get_logger().info(
-                f'''m1 = {motor0:.2f}, m2 = {motor1:.2f}, m3 = {motor2:.2f}, m4 = {motor3:.2f}'''
-            )
+        # if self.counter % 100 == 0:
+        #     self.get_logger().info(
+        #         f'''m1 = {motor0:.2f}, m2 = {motor1:.2f}, m3 = {motor2:.2f}, m4 = {motor3:.2f}'''
+        #     )
 
 
 def main(args = None):

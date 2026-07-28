@@ -356,26 +356,6 @@
         </dynamics>
       </axis>
     </joint>
-    <link name="rotor_0_blade_1_cp">
-      <gravity>false</gravity>
-        <pose>0.084 0 0 0 0 0</pose>
-    </link>
-    <link name="rotor_0_blade_2_cp">
-      <gravity>false</gravity>
-      <pose>-0.084 0 0 0 0 0</pose>
-    </link>
-    <joint
-        name="rotor_0_blade_1_cp_joint"
-        type="fixed">
-      <parent>rotor_0</parent>
-      <child>rotor_0_blade_1_cp</child>
-    </joint>
-    <joint
-        name="rotor_0_blade_2_cp_joint"
-        type="fixed">
-      <parent>rotor_0</parent>
-      <child>rotor_0_blade_2_cp</child>
-    </joint>
     <link name='rotor_1'>
       <pose>0.13 -0.22 0.023 0 0 0</pose>
       <inertial>
@@ -433,22 +413,6 @@
           <damping>0.004</damping>
         </dynamics>
       </axis>
-    </joint>
-    <link name="rotor_1_blade_1_cp">
-      <gravity>false</gravity>
-      <pose>0.084 0 0 0 0 0</pose>
-    </link>
-    <link name="rotor_1_blade_2_cp">
-      <gravity>false</gravity>
-      <pose>-0.084 0 0 0 0 0</pose>
-    </link>
-    <joint name="rotor_1_blade_1_cp_joint" type="fixed">
-      <parent>rotor_1</parent>
-      <child>rotor_1_blade_1_cp</child>
-    </joint>
-    <joint name="rotor_1_blade_2_cp_joint" type="fixed">
-      <parent>rotor_1</parent>
-      <child>rotor_1_blade_2_cp</child>
     </joint>
     <link name='rotor_2'>
       <pose>-0.13 -0.22 0.023 0 0 0</pose>
@@ -508,22 +472,6 @@
         </dynamics>
       </axis>
     </joint>
-    <link name="rotor_2_blade_1_cp">
-      <gravity>false</gravity>
-      <pose>0.084 0 0 0 0 0</pose>
-    </link>
-    <link name="rotor_2_blade_2_cp">
-      <gravity>false</gravity>
-      <pose>-0.084 0 0 0 0 0</pose>
-    </link>
-    <joint name="rotor_2_blade_1_cp_joint" type="fixed">
-      <parent>rotor_2</parent>
-      <child>rotor_2_blade_1_cp</child>
-    </joint>
-    <joint name="rotor_2_blade_2_cp_joint" type="fixed">
-      <parent>rotor_2</parent>
-      <child>rotor_2_blade_2_cp</child>
-    </joint>
     <link name='rotor_3'>
       <pose>-0.13 0.22 0.023 0 0 0</pose>
       <inertial>
@@ -582,172 +530,9 @@
         </dynamics>
       </axis>
     </joint>
-    <link name="rotor_3_blade_1_cp">
-      <gravity>false</gravity>
-      <pose>0.084 0 0 0 0 0</pose>
-    </link>
-    <link name="rotor_3_blade_2_cp">
-      <gravity>false</gravity>
-      <pose>-0.084 0 0 0 0 0</pose>
-    </link>
-    <joint name="rotor_3_blade_1_cp_joint" type="fixed">
-      <parent>rotor_3</parent>
-      <child>rotor_3_blade_1_cp</child>
-    </joint>
-    <joint name="rotor_3_blade_2_cp_joint" type="fixed">
-      <parent>rotor_3</parent>
-      <child>rotor_3_blade_2_cp</child>
-    </joint>
     <plugin
-      filename="libdrone_motor_plugin.so"
-      name="drone_gazebo_plugins::DroneMotorPlugin">
-    </plugin>
-
-    <plugin filename="gz-sim-lift-drag-system"
-        name="gz::sim::systems::LiftDrag">
-      <a0>0.3</a0>
-      <alpha_stall>1.4</alpha_stall>
-      <cla>4.2500</cla>
-      <cda>0.10</cda>
-      <cma>0.0</cma>
-      <cla_stall>-0.025</cla_stall>
-      <cda_stall>0.0</cda_stall>
-      <cma_stall>0.0</cma_stall>
-      <area>0.002</area>
-      <air_density>1.2041</air_density>
-      <cp>0.084 0 0</cp>
-      <forward>0 1 0</forward>
-      <upward>0 0 1</upward>
-      <link_name>rotor_0</link_name>
-    </plugin>
-
-    <plugin filename="gz-sim-lift-drag-system"
-        name="gz::sim::systems::LiftDrag">
-      <a0>0.3</a0>
-      <alpha_stall>1.4</alpha_stall>
-      <cla>4.2500</cla>
-      <cda>0.10</cda>
-      <cma>0.0</cma>
-      <cla_stall>-0.025</cla_stall>
-      <cda_stall>0.0</cda_stall>
-      <cma_stall>0.0</cma_stall>
-      <area>0.002</area>
-      <air_density>1.2041</air_density>
-      <cp>-0.084 0 0</cp>
-      <forward>0 -1 0</forward>
-      <upward>0 0 1</upward>
-      <link_name>rotor_0</link_name>
-    </plugin>
-
-
-    <plugin filename="gz-sim-lift-drag-system"
-        name="gz::sim::systems::LiftDrag">
-      <a0>0.3</a0>
-      <alpha_stall>1.4</alpha_stall>
-      <cla>4.2500</cla>
-      <cda>0.10</cda>
-      <cma>0.0</cma>
-      <cla_stall>-0.025</cla_stall>
-      <cda_stall>0.0</cda_stall>
-      <cma_stall>0.0</cma_stall>
-      <area>0.002</area>
-      <air_density>1.2041</air_density>
-      <cp>0.084 0 0</cp>
-      <forward>0 -1 0</forward>
-      <upward>0 0 1</upward>
-      <link_name>rotor_1</link_name>
-    </plugin>
-
-    <plugin filename="gz-sim-lift-drag-system"
-        name="gz::sim::systems::LiftDrag">
-      <a0>0.3</a0>
-      <alpha_stall>1.4</alpha_stall>
-      <cla>4.2500</cla>
-      <cda>0.10</cda>
-      <cma>0.0</cma>
-      <cla_stall>-0.025</cla_stall>
-      <cda_stall>0.0</cda_stall>
-      <cma_stall>0.0</cma_stall>
-      <area>0.002</area>
-      <air_density>1.2041</air_density>
-      <cp>-0.084 0 0</cp>
-      <forward>0 1 0</forward>
-      <upward>0 0 1</upward>
-      <link_name>rotor_1</link_name>
-    </plugin>
-
-
-    <plugin filename="gz-sim-lift-drag-system"
-        name="gz::sim::systems::LiftDrag">
-      <a0>0.3</a0>
-      <alpha_stall>1.4</alpha_stall>
-      <cla>4.2500</cla>
-      <cda>0.10</cda>
-      <cma>0.0</cma>
-      <cla_stall>-0.025</cla_stall>
-      <cda_stall>0.0</cda_stall>
-      <cma_stall>0.0</cma_stall>
-      <area>0.002</area>
-      <air_density>1.2041</air_density>
-      <cp>0.084 0 0</cp>
-      <forward>0 1 0</forward>
-      <upward>0 0 1</upward>
-      <link_name>rotor_2</link_name>
-    </plugin>
-
-    <plugin filename="gz-sim-lift-drag-system"
-        name="gz::sim::systems::LiftDrag">
-      <a0>0.3</a0>
-      <alpha_stall>1.4</alpha_stall>
-      <cla>4.2500</cla>
-      <cda>0.10</cda>
-      <cma>0.0</cma>
-      <cla_stall>-0.025</cla_stall>
-      <cda_stall>0.0</cda_stall>
-      <cma_stall>0.0</cma_stall>
-      <area>0.002</area>
-      <air_density>1.2041</air_density>
-      <cp>-0.084 0 0</cp>
-      <forward>0 -1 0</forward>
-      <upward>0 0 1</upward>
-      <link_name>rotor_2</link_name>
-    </plugin>
-
-
-    <plugin filename="gz-sim-lift-drag-system"
-        name="gz::sim::systems::LiftDrag">
-      <a0>0.3</a0>
-      <alpha_stall>1.4</alpha_stall>
-      <cla>4.2500</cla>
-      <cda>0.10</cda>
-      <cma>0.0</cma>
-      <cla_stall>-0.025</cla_stall>
-      <cda_stall>0.0</cda_stall>
-      <cma_stall>0.0</cma_stall>
-      <area>0.002</area>
-      <air_density>1.2041</air_density>
-      <cp>0.084 0 0</cp>
-      <forward>0 -1 0</forward>
-      <upward>0 0 1</upward>
-      <link_name>rotor_3</link_name>
-    </plugin>
-
-    <plugin filename="gz-sim-lift-drag-system"
-        name="gz::sim::systems::LiftDrag">
-      <a0>0.3</a0>
-      <alpha_stall>1.4</alpha_stall>
-      <cla>4.2500</cla>
-      <cda>0.10</cda>
-      <cma>0.0</cma>
-      <cla_stall>-0.025</cla_stall>
-      <cda_stall>0.0</cda_stall>
-      <cma_stall>0.0</cma_stall>
-      <area>0.002</area>
-      <air_density>1.2041</air_density>
-      <cp>-0.084 0 0</cp>
-      <forward>0 1 0</forward>
-      <upward>0 0 1</upward>
-      <link_name>rotor_3</link_name>
+      filename="libdrone_actuator_bridge.so"
+      name="drone_gazebo_bridge::DroneActuatorBridge">
     </plugin>
   </model>
 </sdf>

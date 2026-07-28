@@ -41,3 +41,9 @@ ros2 run ros_gz_bridge parameter_bridge /world/iris_runway/model/iris/link/imu_l
 
 8. There needs to add IMU and Magnetometer fusion for yaw. (completed)
 
+9. Need to edit the battery compansation and thrust curve methods i the wrench controller.
+
+10. Need to add control allocation desaturation method in allocation.
+
+11. Need to add low-pass filter for derivative term in body rate controller.
+

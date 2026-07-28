@@ -187,9 +187,9 @@ class EstimatorNode(Node):
         self.yaw = gyro_yaw + 0.01 * yaw_error
         # self.yaw = gyro_yaw
 
-        roll_deg = math.degrees(self.roll)
-        pitch_deg = math.degrees(self.pitch)
-        yaw_deg = math.degrees(self.yaw)
+        # roll_deg = math.degrees(self.roll)
+        # pitch_deg = math.degrees(self.pitch)
+        # yaw_deg = math.degrees(self.yaw)
 
         self.filtered_gyro_x = (
             0.9 * self.filtered_gyro_x +
@@ -206,9 +206,9 @@ class EstimatorNode(Node):
             0.1 * gyro_z
         )
         
-        self.pose_msg.roll = roll_deg
-        self.pose_msg.pitch = pitch_deg
-        self.pose_msg.yaw = yaw_deg
+        self.pose_msg.roll = self.roll
+        self.pose_msg.pitch = self.pitch
+        self.pose_msg.yaw = self.yaw
         self.pose_msg.x = self.latitude
         self.pose_msg.y = self.longitude
         self.pose_msg.z = self.altitude
@@ -216,51 +216,24 @@ class EstimatorNode(Node):
         self.state_msg.linear_vel.x = self.vel_x
         self.state_msg.linear_vel.y = self.vel_y
         self.state_msg.linear_vel.z = self.vel_z
-        self.state_msg.angular_vel.x = math.degrees(self.filtered_gyro_x)
-        self.state_msg.angular_vel.y = math.degrees(self.filtered_gyro_y)
-        self.state_msg.angular_vel.z = math.degrees(self.filtered_gyro_z)
+        self.state_msg.angular_vel.x = self.filtered_gyro_x
+        self.state_msg.angular_vel.y = self.filtered_gyro_y
+        self.state_msg.angular_vel.z = self.filtered_gyro_z
 
         self.pose_pub.publish(self.pose_msg)
         self.state_pub.publish(self.state_msg)
 
-        mag_yaw_deg = math.degrees(mag_yaw)
+        # mag_yaw_deg = math.degrees(mag_yaw)
 
         self.counter += 1
         
-        if self.counter % 250 == 0:
-            self.get_logger().info(
-                f"mag={mag_yaw_deg:.4f}, "
-                f"gyro={math.degrees(gyro_yaw):.4f}, "
-                f"error={math.degrees(yaw_error):.4f}, "
-                f"fused={yaw_deg:.4f}"
-            )
+        # if self.counter % 250 == 0:
         #     self.get_logger().info(
-        #         f"gyro_z_deg={gyro_z_deg:.2f}, "
-        #         f"filtered={math.degrees(self.filtered_gyro_z):.2f}, "
-        #         f"yaw_deg={yaw_deg:.2f}"
+        #         f"mag={mag_yaw_deg:.4f}, "
+        #         f"gyro={math.degrees(gyro_yaw):.4f}, "
+        #         f"error={math.degrees(yaw_error):.4f}, "
+        #         f"fused={yaw_deg:.4f}"
         #     )
-        #     self.get_logger().info(
-        #         f"ax={ax:.4f}, "
-        #         f"ay={ay:.4f}, "
-        #         f"az={az:.4f}"
-        #         f"accel_pitch={accel_pitch:.6f}, "
-        #         f"gyro_y={gyro_y:.6f}, "
-        #         f"pith_deg={pitch_deg:.4f}"
-        #     )
-            # self.get_logger().info(
-            #     f"gyro_yaw={math.degrees(gyro_yaw):.2f}, "
-            #     f"mag_yaw_ref={self.mag_yaw_reference:.2f}, "
-            #     f"mx={self.mag_x:.2f}, "
-            #     f"my={self.mag_y:.2f}, "
-            #     f"mag_yaw={math.degrees(mag_yaw):.2f}, "
-            #     f"est_yaw={math.degrees(self.yaw):.2f}"
-            # )
-            # self.get_logger().info(
-            #     f"accel x y z = {ax:.4f} {ay:.4f} {az:.4f}, "
-            #     f"gyro roll pitch yaw = {msg.gyro_x:.4f} {msg.gyro_y:.4f} {msg.gyro_z:.4f}, "
-            #     f"accel roll pitch = {accel_roll:.4f} {accel_pitch:.4f}, "
-            #     f"current roll pitch yaw = {roll_deg:.4f} {pitch_deg:.4f} {yaw_deg:.4f}"
-            # )
 
 
 def main(args = None):

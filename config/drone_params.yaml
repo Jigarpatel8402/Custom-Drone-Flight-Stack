@@ -7,56 +7,65 @@ drone_estimator:
 
 attitude_angle_control:
   ros__parameters:
-    kp_roll: 1.0
+    kp_roll: 2.0
     ki_roll: 0.0
     kd_roll: 0.0
-    kp_pitch: 1.0
+    kp_pitch: 2.0
     ki_pitch: 0.0
     kd_pitch: 0.0
-    kp_yaw: 0.2
+    kp_yaw: 1.0
     ki_yaw: 0.0
     kd_yaw: 0.0
-    max_roll_rate: 10.0
-    max_pitch_rate: 10.0
-    max_yaw_rate: 5.0
+    max_integral: 10.0
+    max_roll_rate: 60.0
+    max_pitch_rate: 60.0
+    max_yaw_rate: 45.0
 
 attitude_rate_control:
   ros__parameters:
     kp_roll_rate: 1.0
-    ki_roll_rate: 0.0
-    kd_roll_rate: 0.15
+    ki_roll_rate: 0.02
+    kd_roll_rate: 0.03
     kp_pitch_rate: 1.0
-    ki_pitch_rate: 0.0
-    kd_pitch_rate: 0.15
-    kp_yaw_rate: 0.1
+    ki_pitch_rate: 0.02
+    kd_pitch_rate: 0.03
+    kp_yaw_rate: 0.2
     ki_yaw_rate: 0.0
     kd_yaw_rate: 0.0
-    max_roll_output: 5.0
-    max_pitch_output: 5.0
-    max_yaw_output: 3.0
+    max_roll_integral: 10.0
+    max_pitch_integral: 10.0
+    max_yaw_integral: 15.0
+    max_roll_output: 1.0
+    max_pitch_output: 1.0
+    max_yaw_output: 0.25
 
 position_control:
   ros__parameters:
-    kp_position: 1.0
-    ki_position: 0.1
+    kp_position: 0.8
+    ki_position: 0.05
     kd_position: 0.0
     max_velocity: 2.0
 
 altitude_velocity_control:
   ros__parameters:
-    hover_throttle: 350.0
-    kp_altitude_velocity: 100.0
-    ki_altitude_velocity: 10.0
-    kd_altitude_velocity: 150.0
+    kp_altitude_velocity: 4.0
+    ki_altitude_velocity: 0.0
+    kd_altitude_velocity: 0.2
+    max_accel: 5.0
 
 xy_velocity_control:
   ros__parameters:
     kp_xy_velocity: 3.0
     max_tilt: 5.0
 
-drone_pwm:
+wrench_control:
+  ros__parameters:
+    deadband: 0.001
+
+actuator_node:
   ros__parameters:
     timer: 0.0
+    backend: 'sitl'
 
 drone_command:
   ros__parameters:

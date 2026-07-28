@@ -1,5 +1,6 @@
 import rclpy
 from rclpy.node import Node
+from drone_model.constants import Physics
 from drone_interfaces.msg import DroneVelocity, DroneState, DroneAttitude
 
 class XYVelocityController(Node):
@@ -15,6 +16,8 @@ class XYVelocityController(Node):
         self.kp_xy_velocity = self.get_parameter('kp_xy_velocity').value
         self.declare_parameter('max_tilt', 10.0)
         self.max_tilt = self.get_parameter('max_tilt').value
+
+        self.max_tilt *= Physics.DEG2RAD
 
         self.velocity_sub = self.create_subscription(
             DroneVelocity,

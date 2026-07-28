@@ -22,11 +22,14 @@ rosidl_generate_interfaces(
   "msg/DroneGPS.msg"
   "msg/DroneBarometer.msg"
   "msg/DroneMagnetometer.msg"
-  "msg/DroneThrottle.msg"
+  "msg/DroneCollective.msg"
   "msg/DroneAttitude.msg"
   "msg/DronePosition.msg"
   "msg/DroneVelocity.msg"
   "msg/DroneAttitudeRate.msg"
+  "msg/DroneControl.msg"
+  "msg/DroneWrench.msg"
+  "msg/DroneMode.msg"
   DEPENDENCIES geometry_msgs
 )
 

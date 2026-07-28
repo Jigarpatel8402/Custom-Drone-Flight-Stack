@@ -48,7 +48,7 @@ public:
                 "/drone_barometer",
                 10
             );
-
+            
         magnetometer_pub_ =
             ros_node_->create_publisher<
                 drone_interfaces::msg::DroneMagnetometer
@@ -63,13 +63,12 @@ public:
         //     this
         // );
 
-        // Only for attitude testing
-        gz_node_.Subscribe(
+        gz_node_.Subscribe(      // Only for attitude testing
             "/world/iris_attitude_test_runway/model/iris_attitude_test/link/imu_link/sensor/imu_sensor/imu",
             &DroneSensorNode::imuCallback,
             this
         );
-
+        
         gz_node_.Subscribe(
             "/navsat",
             &DroneSensorNode::gpsCallback,

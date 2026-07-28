@@ -24,7 +24,7 @@ setup(
     },
     entry_points={
         'console_scripts': [
-            'drone_pwm = drone_actuator.drone_pwm:main',
+            'actuator_node = drone_actuator.actuator_node:main',
         ],
     },
 )

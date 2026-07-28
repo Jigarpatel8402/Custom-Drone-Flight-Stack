@@ -25,10 +25,11 @@ setup(
     entry_points={
         'console_scripts': [
             'attitude_angle_control = drone_control.attitude_angle_controller:main',
-            'attitude_rate_control = drone_control.attitude_rate_controller:main',
+            'attitude_rate_control = drone_control.body_rate_controller:main',
             'position_control = drone_control.position_controller:main',
             'altitude_velocity_control = drone_control.altitude_velocity_controller:main',
             'xy_velocity_control = drone_control.xy_velocity_controller:main',
+            'wrench_control = drone_control.wrench_controller:main',
         ],
     },
 )
